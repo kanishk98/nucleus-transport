@@ -1,3 +1,6 @@
+# Google Info
+google-services.json
+
 # Xcode
 !**/*.xcodeproj
 !**/*.pbxproj
@@ -44,6 +47,7 @@ buck-out
 .gradle
 local.properties
 *.iml
+*.keystore
 
 # Node
 *.log
