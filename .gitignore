@@ -48,6 +48,7 @@ buck-out
 local.properties
 *.iml
 *.keystore
+android/app/build/*
 
 # Node
 *.log
