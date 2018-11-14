@@ -3,6 +3,7 @@ import { createBottomTabNavigator, createStackNavigator, createSwitchNavigator }
 import AllTrips from './components/AllTrips';
 import Constants from './Constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import AuthLoading from './components/AuthLoading';
 import LoginScreen from './components/LoginScreen';
 
 const allTrips = createStackNavigator({
@@ -51,15 +52,14 @@ const tabNavigator = createBottomTabNavigator({
   initialRouteName: 'AllTrips',
 });
 
-const rootNavigator = createStackNavigator({
-  Login: {
-    screen: LoginScreen,
-  },
-  Trips: {
-    screen: tabNavigator,
-  }
+const AuthStack = createStackNavigator({Login: LoginScreen});
+
+const rootNavigator = createSwitchNavigator({
+  AuthLoading: AuthLoading,
+  App: tabNavigator,
+  AuthStack: AuthStack,
 }, {
-  initialRouteName: 'Login',
+  initialRouteName: 'AuthLoading',
 });
 
 export default class App extends React.PureComponent {
