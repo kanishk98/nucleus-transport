@@ -1,11 +1,17 @@
 import React from 'react';
 import { AsyncStorage, StyleSheet } from 'react-native';
+import Constants from '../Constants';
 
 export default class LoginForm extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
         };
+    }
+    render() {
+        return (
+            null
+        );
     }
 }
 

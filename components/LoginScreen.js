@@ -1,19 +1,20 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import Constants from '../Constants';
-
+import { View, Image, StyleSheet } from 'react-native';
+import LoginForm from './LoginForm';
 
 export default class LoginScreen extends React.PureComponent {
     render() {
-        <KeyboardAvoidingView style={styles.container}>
-            <View style={styles.logoContainer}>
-                <Image
-                    source={require('../../assets/logo.png')}
-                    style={styles.logo}
-                />
+        return (
+            <View style={styles.container}>
+                <View style={styles.logoContainer}>
+                    <Image
+                        source={require('../assets/logo.jpg')}
+                        style={styles.logo}
+                    />
+                </View>
+                <LoginForm navigation={this.props.navigation} />
             </View>
-            <LoginForm navigation={this.props.navigation} />
-        </KeyboardAvoidingView>
+        );
     };
 }
 

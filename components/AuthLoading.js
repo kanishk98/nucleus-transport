@@ -17,8 +17,12 @@ export default class AuthLoadingScreen extends React.Component {
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
     const userToken = await AsyncStorage.getItem(Constants.UserObject);
-    this.props.navigation.navigate(userToken? 'App' : 'Auth');
+    this.props.navigation.navigate(userToken? 'App' : 'AuthStack');
   };
+
+  componentDidMount() {
+    this._bootstrapAsync();
+  }
 
   render() {
     return (
@@ -33,6 +37,7 @@ export default class AuthLoadingScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        justifyContent: 'center',
         alignItems: 'center',
     }
 });
