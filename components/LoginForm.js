@@ -39,7 +39,6 @@ export default class LoginForm extends React.PureComponent {
                 console.log(JSON.stringify(signedInUser));
                 this.setState({ user: signedInUser, error: null, progress: true, loggedIn: true });
                 // authenticating with Firebase
-                // TODO: ADD INTERNET CONNECTIVITY CHECK, HOOK RESULT ACCORDINGLY INTO UI
                 const firebaseCredential = firebase.auth.GoogleAuthProvider.credential(signedInUser.idToken,
                     signedInUser.accessToken);
                 const firebaseUser = await firebase.auth().signInAndRetrieveDataWithCredential(firebaseCredential);
@@ -47,7 +46,6 @@ export default class LoginForm extends React.PureComponent {
                     firebaseId: firebaseUser.user.uid,
                     username: firebaseUser.user.displayName,
                 };
-                // adding newUser object to database
                 this.resolveUser(newUser);
             } else {
                 console.log('Signing out user');
