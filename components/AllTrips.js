@@ -1,8 +1,19 @@
 import React from 'react';
-import {Text} from 'react-native';
+import {SectionList, FlatList} from 'react-native';
+import BusCard from './BusCard';
 
 export default class AllTrips extends React.PureComponent {
+    
+    constructor(props) {
+        super(props);
+        this.fetchInitialBuses();
+    }
+
+    fetchInitialBuses = () => {
+        
+    }
+
     render() {
-        return <Text>All trips here</Text>
+        return <BusCard />
     }
 }
