@@ -1,7 +1,9 @@
 import React from 'react';
-import { AsyncStorage, StyleSheet } from 'react-native';
+import { View, Text, AsyncStorage, StyleSheet, ActivityIndicator } from 'react-native';
 import { GoogleSignin, GoogleSigninButton } from 'react-native-google-signin';
 import Constants from '../Constants';
+import { renderIf } from './renderIf';
+import firebase from 'react-native-firebase';
 
 export default class LoginForm extends React.PureComponent {
     constructor(props) {
@@ -41,88 +43,12 @@ export default class LoginForm extends React.PureComponent {
                 const firebaseCredential = firebase.auth.GoogleAuthProvider.credential(signedInUser.idToken,
                     signedInUser.accessToken);
                 const firebaseUser = await firebase.auth().signInAndRetrieveDataWithCredential(firebaseCredential);
-                const firebaseOIDCToken = await firebaseUser.user.getIdToken(true);
-                console.log(firebaseOIDCToken);
-                let enabled = false;
-                try {
-                    console.log('Awaiting Firebase request for permission');
-                    firebase.messaging().requestPermission()
-                    .then(res => console.log(res))
-                    .catch(err => console.log(err));
-                } catch (error) {
-                    console.log(error);
-                    enabled = false;
-                }
-                let fcmToken = 'null';
-                if (enabled) {
-                    this.fcmToken = firebase.messaging().getToken()
-                        .then(res => {
-                            console.log('fcm token ' + res);
-                            fcmToken = res;
-                        })
-                        .catch(err => {
-                            console.log(err);
-                        })
+                let newUser = {
+                    firebaseId: firebaseUser.user.uid,
+                    username: firebaseUser.user.displayName,
                 };
-                Auth.configure({
-                    identityPoolId: 'ap-south-1:7bea4d8a-8ec9-425b-833d-2ac9ed73e27b',
-                    region: 'ap-south-1'
-                });
-                Auth.federatedSignIn(
-                    'securetoken.google.com/nucleus-2018',
-                    {
-                        token: firebaseOIDCToken
-                    },
-                    signedInUser)
-                    .then(user => {
-                        console.log(firebaseUser.user.displayName);
-                        this.setLoggedIn('LOGGED_IN', 'true');
-                        let newUser = {
-                            firebaseId: firebaseUser.user.uid,
-                            geohash: 'null',
-                            offenses: 0,
-                            online: 1,
-                            paid: false,
-                            profilePic: this.state.user.user.photo,
-                            username: firebaseUser.user.displayName,
-                            fcmToken: fcmToken,
-                        };
-                        let items = null;
-                        API.graphql(graphqlOperation(GraphQL.GetUserById, { filter: { firebaseId: { eq: firebaseUser.user.uid } } }))
-                            .then(res => {
-                                items = res.data.listUsersById.items;
-                                if (!!items && items.length > 0) {
-                                    this.resolveUser(newUser);
-                                }
-                            })
-                            .catch(err => {
-                                console.log(err);
-                            });
-                        if (!items || items.length == 0) {
-                            API.graphql(graphqlOperation(GraphQL.CreateDiscoverUser, { input: newUser }))
-                                .then(res => {
-                                    this.resolveUser(newUser);
-                                    this.updateUserCount();
-                                })
-                                .catch(err => {
-                                    console.log(err);
-                                    if (JSON.stringify(err).indexOf('Dynamo') != -1) {
-                                        this.resolveUser(newUser);
-                                    } else {
-                                        Alert.alert(
-                                            'Student data over?',
-                                            'We were unable to log you in. This mostly happens because of a slow network connection.'
-                                        );
-                                    }
-                                });
-                        }
-                    })
-                    .catch(error => {
-                        console.log(error);
-                        Alert.alert(
-                            'Network unavailable',
-                            'We were unable to log you in. Please try again later.');
-                    });
+                // adding newUser object to database
+                this.resolveUser(newUser);
             } else {
                 console.log('Signing out user');
                 console.log(await GoogleSignin.signOut());
@@ -130,7 +56,7 @@ export default class LoginForm extends React.PureComponent {
                 this.signOut();
             }
         } catch (error) {
-            console.log(error.message);
+            console.log(error);
             if (error.code == 'CANCELED') {
                 error.message = 'User canceled login';
             }
@@ -138,31 +64,10 @@ export default class LoginForm extends React.PureComponent {
         }
     };
 
-    resolveUser = (newUser) => {
+    resolveUser = async (newUser) => {
         console.log(newUser);
-        AsyncStorage.setItem(Constants.LoggedIn, 'T')
-            .then(res => {
-                console.log('User saved as logged in');
-                AsyncStorage.setItem(Constants.UserObject, JSON.stringify(newUser))
-                    .then(res => {
-                        console.log('newUser saved');
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    });
-            })
-            .catch(err => {
-                console.log(err);
-            });
-        this.fetchUsers(newUser.firebaseId);
-        // popping LoginScreen from navigation stack
-        this.props.navigation.dispatch(StackActions.reset({
-            index: 0,
-            key: null,
-            actions: [
-                NavigationActions.navigate({ routeName: 'Chat', params: { user: newUser } })]
-        }));
-        this.props.navigation.navigate('Chat', { user: newUser });
+        await AsyncStorage.setItem(Constants.UserObject, JSON.stringify(newUser));
+        this.props.navigation.navigate('App', { user: newUser });
     }
 
     async signOut() {
@@ -174,14 +79,6 @@ export default class LoginForm extends React.PureComponent {
             this.setState({
                 error: error,
             });
-        }
-    };
-
-    async setLoggedIn(key, item) {
-        try {
-            await AsyncStorage.setItem(key, item);
-        } catch (error) {
-            console.log(error.message);
         }
     };
 
@@ -199,27 +96,22 @@ export default class LoginForm extends React.PureComponent {
         }
     }
 
-
     async componentDidMount() {
         await this.configureGoogleSignIn();
     }
 
     render() {
-        const ProgressBar = Platform.select({
-            ios: () => ProgressViewIOS,
-            android: () => ProgressBarAndroid
-        })();
         const user = this.state.user;
         if (!user) {
             return (
                 <View style={styles.container}>
                     <Text style={styles.instructions}>Only SNU accounts allowed.</Text>
-                    {renderProgress(!this.state.progress, <GoogleSigninButton
+                    {renderIf(!this.state.progress, <GoogleSigninButton
                         style={styles.signInButton}
                         size={GoogleSigninButton.Size.Wide}
                         color={GoogleSigninButton.Color.Light}
                         onPress={this.signIn}
-                    />, <ProgressBar />)}
+                    />, <ActivityIndicator />)}
                 </View>
             );
         } else {
@@ -228,7 +120,7 @@ export default class LoginForm extends React.PureComponent {
                     <Text style={styles.instructions}>
                         {user.user.email}
                     </Text>
-                    <ProgressBar />
+                    <ActivityIndicator />
                 </View>
             );
         }

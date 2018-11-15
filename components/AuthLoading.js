@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import Constants from '../Constants';
 
-export default class AuthLoadingScreen extends React.Component {
+export default class AuthLoadingScreen extends React.PureComponent {
   constructor(props) {
     super(props);
     this._bootstrapAsync();
