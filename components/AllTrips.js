@@ -81,7 +81,7 @@ export default class AllTrips extends React.PureComponent {
                 <View style={styles.container}>
                     <SectionList
                         renderSectionHeader={({section}) => <Text>{section.title}</Text>}
-                        renderItem={({item}) => <BusCard title={"Loaded bus info"} />}
+                        renderItem={({item}) => <BusCard title={item.from} />}
                         keyExtractor={this._keyExtractor}
                         sections={sections}
                         onEndReached={this.fetchBuses}

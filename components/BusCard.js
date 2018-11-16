@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card } from 'react-native-elements';
+import { PricingCard, Button } from 'react-native-elements';
 
 export default class BusCard extends React.PureComponent {
     
@@ -9,8 +9,10 @@ export default class BusCard extends React.PureComponent {
 
     render() {
         return (
-            <Card
+            <PricingCard
                 title={this.props.title || 'Oops. Something went wrong.'}
+                price='Rs. 100'
+                button={{title: 'Book now'}}
             />
         );
     }
