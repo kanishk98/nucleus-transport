@@ -1,7 +1,7 @@
-export function renderIf(condition, content, progress) {
+export function renderIf(condition, content, alternateContent) {
     if (condition) {
         return content;
     } else {
-        return progress;
+        return alternateContent;
     }
 }

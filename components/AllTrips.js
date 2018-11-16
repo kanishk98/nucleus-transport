@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SectionList, StyleSheet } from 'react-native';
+import { View, SectionList, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import BusCard from './BusCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
@@ -9,13 +9,16 @@ export default class AllTrips extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            error: null,
+            currentPage: 1,
         }
-        this.fetchInitialBuses();
+        this.fetchBuses();
     }
 
-    fetchInitialBuses = () => {
-        fetch('http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=1')
+    _keyExtractor = (item, index) => {item._id}
+
+    fetchBuses = () => {
+        const { currentPage } = this.state;
+        fetch('http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage)
             .then(async (res) => {
                 console.log(res);
                 const data = await res.json();
@@ -44,6 +47,12 @@ export default class AllTrips extends React.PureComponent {
                     }
                     ++counter;
                 }
+                if (currentPage > 1 && !!this.state.sections) {
+                    // old sections are present
+                    let oldSections = this.state.sections;
+                    oldSections.push(sections);
+                    sections = oldSections;
+                }
                 this.setState({sections: sections});
             })
             .catch(err => {
@@ -53,18 +62,33 @@ export default class AllTrips extends React.PureComponent {
     }
 
     _onRefresh = () => {
-        this.fetchInitialBuses();
+        this.fetchBuses();
     }
 
     render() {
         const { sections, error } = this.state;
+        console.log(sections);
+        if (!sections) {
+            return (
+                <View style={styles.container}>
+                    <ActivityIndicator />
+                </View>
+            );
+        }
         return (
             renderIf(
-                !!error,
+                !error && !!sections,
                 <View style={styles.container}>
-                    <View style={styles.container}>
-                        <BusCard title={"Student data over? We couldn't fetch bus info."} />
-                    </View>
+                    <SectionList
+                        renderSectionHeader={({section}) => <Text>{section.title}</Text>}
+                        renderItem={({item}) => <BusCard title={"Loaded bus info"} />}
+                        keyExtractor={this._keyExtractor}
+                        sections={sections}
+                        onEndReached={this.fetchBuses}
+                        onEndReachedThreshold={0.40}
+                        refreshing={false}
+                        onRefresh={this._onRefresh}
+                    />
                 </View>,
                 <View style={styles.container}>
                     <BusCard title={"Student data over? We couldn't fetch bus info."} />
