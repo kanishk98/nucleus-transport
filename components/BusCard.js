@@ -10,7 +10,7 @@ export default class BusCard extends React.PureComponent {
     render() {
         return (
             <Card
-                title={'This is a card'}
+                title={this.props.title || 'Oops. Something went wrong.'}
             />
         );
     }
