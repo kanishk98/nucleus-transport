@@ -18,7 +18,7 @@ export const allTrips = createStackNavigator({
 
 export const orders = createStackNavigator({
   Orders: {
-    screen: Orders,
+    screen: (props) => {<AllTrips {...props} {...{orders: true}} />},
     navigationOptions: ({ navigation }) => ({
       header: null,
     })

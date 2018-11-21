@@ -3,7 +3,7 @@ import { View, SectionList, StyleSheet, ActivityIndicator, Text } from 'react-na
 import BusCard from './BusCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
-import {Header} from 'react-native-elements';
+import { Header } from 'react-native-elements';
 
 export default class AllTrips extends React.PureComponent {
 
@@ -12,14 +12,19 @@ export default class AllTrips extends React.PureComponent {
         this.state = {
             currentPage: 1,
         }
-        this.fetchBuses();
+        this._onRefresh();
     }
 
-    _keyExtractor = (item, index) => {item._id}
+    _keyExtractor = (item, index) => { item._id }
 
-    fetchBuses = () => {
+    fetchItems = () => {
         const { currentPage } = this.state;
-        fetch('http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage)
+        if (this.props.orders) {
+            url = null;
+        } else {
+            url = 'http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage;
+        }
+        fetch(url)
             .then(async (res) => {
                 console.log(res);
                 const data = await res.json();
@@ -54,7 +59,7 @@ export default class AllTrips extends React.PureComponent {
                     oldSections.push(sections);
                     sections = oldSections;
                 }
-                this.setState({sections: sections});
+                this.setState({ sections: sections });
             })
             .catch(err => {
                 console.log(err);
@@ -63,10 +68,14 @@ export default class AllTrips extends React.PureComponent {
     }
 
     _onRefresh = () => {
-        this.fetchBuses();
+        if (this.props.orders) {
+            this.fetchOrders();
+        } else {
+            this.fetchBuses();
+        }
     }
 
-    _renderSectionHeader = ({section}) => {
+    _renderSectionHeader = ({ section }) => {
         return (
             <Header
                 backgroundColor={Constants.primaryColor}
@@ -84,7 +93,7 @@ export default class AllTrips extends React.PureComponent {
         if (!sections) {
             return (
                 <View style={styles.container}>
-                    <ActivityIndicator />
+                    <ActivityIndicator color={Constants.primaryColor} />
                 </View>
             );
         }
@@ -93,8 +102,8 @@ export default class AllTrips extends React.PureComponent {
                 !error && !!sections,
                 <View style={styles.container}>
                     <SectionList
-                        renderSectionHeader={({section}) => this._renderSectionHeader({section})}
-                        renderItem={({item}) => <BusCard title={item.from} />}
+                        renderSectionHeader={({ section }) => this._renderSectionHeader({ section })}
+                        renderItem={({ item }) => <BusCard title={item.from} />}
                         keyExtractor={this._keyExtractor}
                         sections={sections}
                         onEndReached={this.fetchBuses}
