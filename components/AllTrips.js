@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, FlatList, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, ImageBackground, Text, Dimensions } from 'react-native';
 import BusCard from './BusCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
@@ -15,7 +15,7 @@ export default class AllTrips extends React.PureComponent {
         this.fetchItems();
     }
 
-    _keyExtractor = (item, index) => { 
+    _keyExtractor = (item, index) => {
         return item._id;
     }
 
@@ -61,7 +61,7 @@ export default class AllTrips extends React.PureComponent {
                     oldSections.push(sections);
                     sections = oldSections;
                 }
-                this.setState({data: data});
+                this.setState({ data: data });
             })
             .catch(err => {
                 console.log(err);
@@ -86,33 +86,47 @@ export default class AllTrips extends React.PureComponent {
     }
 
     render() {
-        const {error, data} = this.state;
+        const { error, data } = this.state;
         return (
             renderIf(
                 !error,
-                <View style={styles.container}>
-                    <FlatList
-                        data={data}
-                        renderItem={({ item }) => <BusCard title={item.date} />}
-                        keyExtractor={this._keyExtractor}
-                        onEndReached={this.fetchBuses}
-                        onEndReachedThreshold={0.40}
-                        refreshing={false}
-                        onRefresh={this._onRefresh}
-                    />
-                </View>,
-                <View style={styles.container}>
-                    <BusCard title={"Student data over? We couldn't fetch bus info."} />
-                </View>
+                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                    <View style={styles.container}>
+                        <FlatList
+                            data={data}
+                            renderItem={({ item }) => <BusCard title={item.date} />}
+                            keyExtractor={this._keyExtractor}
+                            onEndReached={this.fetchBuses}
+                            onEndReachedThreshold={0.40}
+                            refreshing={false}
+                            onRefresh={this._onRefresh}
+                        />
+                    </View>
+                </ImageBackground>,
+                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                    <View style={styles.container}>
+                        <BusCard title={"Student data over? We couldn't fetch bus info."} />
+                    </View>
+                </ImageBackground>
             )
         );
     }
 }
+
+const DEVICE_WIDTH = Dimensions.get('window').width;
+const DEVICE_HEIGHT = Dimensions.get('window').height;
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+    },
+    background: {
+        height: DEVICE_HEIGHT,
+        width: DEVICE_WIDTH,
+    },
+    image: {
+        backgroundColor: 'rgba(0, 0, 0, 1.0)',
     }
 })
