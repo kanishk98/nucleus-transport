@@ -7,6 +7,12 @@ import { Header } from 'react-native-elements';
 
 export default class AllTrips extends React.PureComponent {
 
+    static navigationOptions = ({navigation}) => {
+        return {
+            title: navigation.getParam('title')
+        }
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -85,6 +91,10 @@ export default class AllTrips extends React.PureComponent {
         );
     }
 
+    componentDidMount() {
+        this.props.navigation.setParams({title: this.props.orders?'Orders':'All trips'});
+    }
+
     render() {
         const { error, data } = this.state;
         return (
@@ -94,7 +104,7 @@ export default class AllTrips extends React.PureComponent {
                     <View style={styles.container}>
                         <FlatList
                             data={data}
-                            renderItem={({ item }) => <BusCard title={item.date} />}
+                            renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
                             keyExtractor={this._keyExtractor}
                             onEndReached={this.fetchBuses}
                             onEndReachedThreshold={0.40}

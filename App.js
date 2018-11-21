@@ -5,22 +5,17 @@ import Constants from './Constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AuthLoading from './components/AuthLoading';
 import LoginScreen from './components/LoginScreen';
+import ConfirmOrder from './components/ConfirmOrder';
 
 export const allTrips = createStackNavigator({
   AllTrips: {
     screen: AllTrips,
-    navigationOptions: ({ navigation }) => ({
-      header: null,
-    })
   },
 });
 
 export const orders = createStackNavigator({
   Orders: {
     screen: (props) => { <AllTrips {...props} {...{ orders: true }} /> },
-    navigationOptions: ({ navigation }) => ({
-      header: null,
-    })
   },
 });
 
@@ -56,6 +51,7 @@ const RootNavigator = createSwitchNavigator({
   AuthLoading: AuthLoading,
   App: tabNavigator,
   AuthStack: LoginScreen,
+  ConfirmOrder: ConfirmOrder,
 }, {
     initialRouteName: 'AuthLoading',
   });

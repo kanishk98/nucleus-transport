@@ -5,20 +5,21 @@ import Constants from '../Constants';
 
 export default class BusCard extends React.PureComponent {
 
-    constructor(props) {
-        super(props);
+    _onClick = () => {
+        this.props.navigation.navigate('ConfirmOrder', {ticket: this.props.item});
     }
 
     render() {
-        console.log(this.props);
+        console.log(this.props.item);
         return (
             <PricingCard
                 containerStyle={styles.container}
-                title={this.props.title || 'Loading title...'}
+                title={this.props.item.title || 'Loading title...'}
                 color={Constants.primaryColor}
-                price={this.props.price || 'Rs. ur_mom'}
-                info={[this.props.seats || 0 + ' seats available', this.props.type || 'Weekend bus']}
-                button={{title: this.props.buttonTitle || 'Book now', buttonStyle: styles.button}}
+                price={this.props.item.price || 'Rs. _'}
+                info={[this.props.item.seats || 0 + ' seats available', this.props.item.type || 'Weekend bus']}
+                button={{title: this.props.item.buttonTitle || 'Book now', buttonStyle: styles.button}}
+                onButtonPress={this._onClick}
             />
         );
     }
