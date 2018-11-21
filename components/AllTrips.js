@@ -3,6 +3,7 @@ import { View, SectionList, StyleSheet, ActivityIndicator, Text } from 'react-na
 import BusCard from './BusCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
+import {Header} from 'react-native-elements';
 
 export default class AllTrips extends React.PureComponent {
 
@@ -65,6 +66,18 @@ export default class AllTrips extends React.PureComponent {
         this.fetchBuses();
     }
 
+    _renderSectionHeader = ({section}) => {
+        return (
+            <Header
+                backgroundColor={Constants.primaryColor}
+                placement='left'
+                leftComponent={null}
+                centerComponent={<Text>{section.title}</Text>}
+                rightComponent={null}
+            />
+        );
+    }
+
     render() {
         const { sections, error } = this.state;
         console.log(sections);
@@ -80,7 +93,7 @@ export default class AllTrips extends React.PureComponent {
                 !error && !!sections,
                 <View style={styles.container}>
                     <SectionList
-                        renderSectionHeader={({section}) => <Text>{section.title}</Text>}
+                        renderSectionHeader={({section}) => this._renderSectionHeader({section})}
                         renderItem={({item}) => <BusCard title={item.from} />}
                         keyExtractor={this._keyExtractor}
                         sections={sections}
