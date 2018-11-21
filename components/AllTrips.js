@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SectionList, StyleSheet, ActivityIndicator, Text } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, Text } from 'react-native';
 import BusCard from './BusCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
@@ -12,15 +12,17 @@ export default class AllTrips extends React.PureComponent {
         this.state = {
             currentPage: 1,
         }
-        this._onRefresh();
+        this.fetchItems();
     }
 
-    _keyExtractor = (item, index) => { item._id }
+    _keyExtractor = (item, index) => { 
+        return item._id;
+    }
 
     fetchItems = () => {
         const { currentPage } = this.state;
         if (this.props.orders) {
-            url = null;
+            url = 'http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage;
         } else {
             url = 'http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage;
         }
@@ -59,7 +61,7 @@ export default class AllTrips extends React.PureComponent {
                     oldSections.push(sections);
                     sections = oldSections;
                 }
-                this.setState({ sections: sections });
+                this.setState({data: data});
             })
             .catch(err => {
                 console.log(err);
@@ -68,11 +70,7 @@ export default class AllTrips extends React.PureComponent {
     }
 
     _onRefresh = () => {
-        if (this.props.orders) {
-            this.fetchOrders();
-        } else {
-            this.fetchBuses();
-        }
+        this.fetchItems();
     }
 
     _renderSectionHeader = ({ section }) => {
@@ -88,24 +86,15 @@ export default class AllTrips extends React.PureComponent {
     }
 
     render() {
-        const { sections, error } = this.state;
-        console.log(sections);
-        if (!sections) {
-            return (
-                <View style={styles.container}>
-                    <ActivityIndicator color={Constants.primaryColor} />
-                </View>
-            );
-        }
+        const {error, data} = this.state;
         return (
             renderIf(
-                !error && !!sections,
+                !error,
                 <View style={styles.container}>
-                    <SectionList
-                        renderSectionHeader={({ section }) => this._renderSectionHeader({ section })}
-                        renderItem={({ item }) => <BusCard title={item.from} />}
+                    <FlatList
+                        data={data}
+                        renderItem={({ item }) => <BusCard title={item.date} />}
                         keyExtractor={this._keyExtractor}
-                        sections={sections}
                         onEndReached={this.fetchBuses}
                         onEndReachedThreshold={0.40}
                         refreshing={false}

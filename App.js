@@ -5,7 +5,6 @@ import Constants from './Constants';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AuthLoading from './components/AuthLoading';
 import LoginScreen from './components/LoginScreen';
-import Orders from './components/Orders';
 
 export const allTrips = createStackNavigator({
   AllTrips: {
