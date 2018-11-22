@@ -5,7 +5,7 @@ import Constants from '../Constants';
 import { renderIf } from './renderIf';
 import { Header } from 'react-native-elements';
 
-export default class AllTrips extends React.PureComponent {
+export default class AllTrips extends React.Component {
 
     static navigationOptions = ({navigation}) => {
         return {

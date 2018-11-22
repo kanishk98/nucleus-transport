@@ -15,7 +15,7 @@ export const allTrips = createStackNavigator({
 
 export const orders = createStackNavigator({
   Orders: {
-    screen: (props) => { <AllTrips {...props} {...{ orders: true }} /> },
+    screen: (props) => <AllTrips {...props} {...{ orders: true }} />,
   },
 });
 
