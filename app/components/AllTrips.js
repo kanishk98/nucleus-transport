@@ -93,6 +93,13 @@ export default class AllTrips extends React.Component {
 
     render() {
         const { error, data } = this.state;
+        if (!data) {
+            return (
+                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                    <ActivityIndicator color={Constants.primaryColor} />
+                </ImageBackground>
+            );
+        }
         return (
             renderIf(
                 !error,

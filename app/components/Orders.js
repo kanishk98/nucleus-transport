@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator, ImageBackground, Text, Dimensions } from 'react-native';
-import BusCard from './BusCard';
+import OrderCard from './OrderCard';
 import Constants from '../Constants';
 import { renderIf } from './renderIf';
 import { Header } from 'react-native-elements';
@@ -93,6 +93,13 @@ export default class AllTrips extends React.Component {
 
     render() {
         const { error, data } = this.state;
+        if (!data) {
+            return (
+                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                    <ActivityIndicator color={Constants.primaryColor} />
+                </ImageBackground>
+            );
+        }
         return (
             renderIf(
                 !error,
@@ -100,7 +107,7 @@ export default class AllTrips extends React.Component {
                     <View style={styles.container}>
                         <FlatList
                             data={data}
-                            renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
+                            renderItem={({ item }) => <OrderCard navigation={this.props.navigation} item={item} />}
                             keyExtractor={this._keyExtractor}
                             onEndReached={this.fetchItems}
                             onEndReachedThreshold={0.40}
@@ -111,7 +118,7 @@ export default class AllTrips extends React.Component {
                 </ImageBackground>,
                 <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
                     <View style={styles.container}>
-                        <BusCard item={{ title: "Student over?", price: "404", seats: "We couldn't fetch your data.", type: "Failed request" }} />
+                        <OrderCard item={{ title: "Student over?", price: "404", seats: "We couldn't fetch your data.", type: "Failed request" }} />
                     </View>
                 </ImageBackground>
             )
