@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Dimensions, View } from 'react-native';
-import { PricingCard } from 'react-native-elements';
+import { PricingCard, Button } from 'react-native-elements';
 import Constants from '../Constants';
 
 export default class BusCard extends React.PureComponent {
@@ -24,7 +24,7 @@ export default class BusCard extends React.PureComponent {
                 color={Constants.primaryColor}
                 price={this.props.item.price || ''}
                 info={[this.props.item.seats || 0 + ' seats available', this.props.item.type || 'Weekend bus']}
-                button={{ title: this.props.item.buttonTitle || 'Sorry.', buttonStyle: styles.button }}
+                button={{ title: this.props.item.buttonTitle || "You're offline.", buttonStyle: styles.button }}
                 onButtonPress={this._onClick}
             />
         );

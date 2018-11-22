@@ -6,6 +6,7 @@ import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import AuthLoading from './components/AuthLoading';
 import LoginScreen from './components/LoginScreen';
 import ConfirmOrder from './components/ConfirmOrder';
+import Orders from './components/Orders';
 
 export const allTrips = createStackNavigator({
   AllTrips: {
@@ -15,7 +16,7 @@ export const allTrips = createStackNavigator({
 
 export const orders = createStackNavigator({
   Orders: {
-    screen: (props) => <AllTrips {...props} {...{ orders: true }} />,
+    screen: Orders,
   },
 });
 

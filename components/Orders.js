@@ -27,7 +27,7 @@ export default class AllTrips extends React.Component {
 
     fetchItems = () => {
         const { currentPage } = this.state;
-        const url = 'http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage;
+        const url = 'http://' + Constants.transportIp + '/get-orders?perPage=5&currentPage=' + currentPage;
         fetch(url)
             .then(async (res) => {
                 console.log(res);
@@ -88,7 +88,7 @@ export default class AllTrips extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({ title: 'All trips' });
+        this.props.navigation.setParams({ title: 'Orders' });
     }
 
     render() {
