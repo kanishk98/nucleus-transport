@@ -7,7 +7,7 @@ import { Header } from 'react-native-elements';
 
 export default class AllTrips extends React.Component {
 
-    static navigationOptions = ({navigation}) => {
+    static navigationOptions = ({ navigation }) => {
         return {
             title: navigation.getParam('title')
         }
@@ -92,34 +92,61 @@ export default class AllTrips extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({title: this.props.orders?'Orders':'All trips'});
+        this.props.navigation.setParams({ title: this.props.orders ? 'Orders' : 'All trips' });
     }
 
     render() {
         const { error, data } = this.state;
-        return (
-            renderIf(
-                !error,
-                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
-                    <View style={styles.container}>
-                        <FlatList
-                            data={data}
-                            renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
-                            keyExtractor={this._keyExtractor}
-                            onEndReached={this.fetchBuses}
-                            onEndReachedThreshold={0.40}
-                            refreshing={false}
-                            onRefresh={this._onRefresh}
-                        />
-                    </View>
-                </ImageBackground>,
-                <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
-                    <View style={styles.container}>
-                        <BusCard title={"Student data over? We couldn't fetch bus info."} />
-                    </View>
-                </ImageBackground>
-            )
-        );
+        if (!this.props.orders) {
+            return (
+                renderIf(
+                    !error && !this.props.orders,
+                    <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                        <View style={styles.container}>
+                            <FlatList
+                                data={data}
+                                renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
+                                keyExtractor={this._keyExtractor}
+                                onEndReached={this.fetchItems}
+                                onEndReachedThreshold={0.40}
+                                refreshing={false}
+                                onRefresh={this._onRefresh}
+                            />
+                        </View>
+                    </ImageBackground>,
+                    <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                        <View style={styles.container}>
+                            <BusCard item={{ title: "Student over?", price:"404", seats: "We couldn't fetch your data.", type: "Failed request" }} />
+                        </View>
+                    </ImageBackground>
+                )
+            );
+        } else {
+            console.log('Fetching orders');
+            return (
+                renderIf(
+                    !error && this.props.orders,
+                    <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                        {/*<View style={styles.container}>*/}
+                            <FlatList
+                                data={data}
+                                renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
+                                keyExtractor={this._keyExtractor}
+                                onEndReached={this.fetchItems}
+                                onEndReachedThreshold={0.40}
+                                refreshing={false}
+                                onRefresh={this._onRefresh}
+                            />
+                        {/*</View>*/}
+                    </ImageBackground>,
+                    <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
+                        <View style={styles.container}>
+                            <BusCard item={{ title: "Student over?", price:"404", seats: "We couldn't fetch your data.", type: "Failed request" }} />
+                        </View>
+                    </ImageBackground>
+                )
+            );
+        }
     }
 }
 
@@ -129,14 +156,13 @@ const DEVICE_HEIGHT = Dimensions.get('window').height;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'center'
     },
     background: {
         height: DEVICE_HEIGHT,
         width: DEVICE_WIDTH,
     },
     image: {
-        backgroundColor: 'rgba(0, 0, 0, 1.0)',
+        backgroundColor: 'rgba(0, 0, 0, 0.1)',
     }
 })

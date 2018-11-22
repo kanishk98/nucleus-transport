@@ -5,8 +5,14 @@ import Constants from '../Constants';
 
 export default class BusCard extends React.PureComponent {
 
+    constructor(props) {
+        super(props);
+    }
+
     _onClick = () => {
-        this.props.navigation.navigate('ConfirmOrder', { ticket: this.props.item });
+        if (this.props.item.buttonTitle) {
+            this.props.navigation.navigate('ConfirmOrder', { ticket: this.props.item });
+        }
     }
 
     render() {
@@ -16,9 +22,9 @@ export default class BusCard extends React.PureComponent {
                 containerStyle={styles.container}
                 title={this.props.item.title || 'Loading title...'}
                 color={Constants.primaryColor}
-                price={this.props.item.price || 'Rs. _'}
+                price={this.props.item.price || ''}
                 info={[this.props.item.seats || 0 + ' seats available', this.props.item.type || 'Weekend bus']}
-                button={{ title: this.props.item.buttonTitle || 'Book now', buttonStyle: styles.button }}
+                button={{ title: this.props.item.buttonTitle || 'Sorry.', buttonStyle: styles.button }}
                 onButtonPress={this._onClick}
             />
         );
@@ -32,10 +38,12 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginRight: 10,
         marginLeft: 10,
-        paddingRight: DEVICE_WIDTH/5,
-        paddingLeft: DEVICE_WIDTH/5,
+        paddingRight: DEVICE_WIDTH / 5,
+        paddingLeft: DEVICE_WIDTH / 5,
     },
     button: {
+        paddingRight: DEVICE_WIDTH/6,
+        paddingLeft: DEVICE_WIDTH/6,
         borderRadius: 10,
     }
 });
