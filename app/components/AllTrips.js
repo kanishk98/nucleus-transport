@@ -33,36 +33,6 @@ export default class AllTrips extends React.Component {
                 console.log(res);
                 const data = await res.json();
                 console.log(data);
-                let sections = [];
-                // index each section by data.date
-                let prevTitle = '';
-                let dataLength = data.length;
-                let title = data[0].date;
-                let counter = 0;
-                while (counter < dataLength) {
-                    if (counter != 0) {
-                        prevTitle = data[counter - 1].data;
-                    }
-                    if (title != prevTitle) {
-                        sections.push({
-                            data: [data[counter]],
-                            title: title,
-                        });
-                    } else {
-                        // old section, new bus
-                        let oldLast = sections[sections.length - 1];
-                        oldLast.data.push(data[counter]);
-                        console.log(oldLast);
-                        sections.splice(-1, 1, oldLast);
-                    }
-                    ++counter;
-                }
-                if (currentPage > 1 && !!this.state.sections) {
-                    // old sections are present
-                    let oldSections = this.state.sections;
-                    oldSections.push(sections);
-                    sections = oldSections;
-                }
                 this.setState({ data: data });
             })
             .catch(err => {
