@@ -51,7 +51,7 @@ export default class AllTrips extends React.Component {
 
     render() {
         const { error, data } = this.state;
-        if (!data) {
+        if (!data || data.length == 0) {
             return (
                 <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
                     <ActivityIndicator color={Constants.primaryColor} style={{alignSelf: 'center'}} />
@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     },
     background: {
         flex: 1,
+        justifyContent: 'center',
         height: DEVICE_HEIGHT,
         width: DEVICE_WIDTH,
         alignItems: 'center',

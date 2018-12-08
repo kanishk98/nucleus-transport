@@ -10,14 +10,22 @@ export default class BusCard extends React.PureComponent {
         this.item = this.props.item;
         console.log(this.props.item);
         let item = this.item;
-        item.title = this.props.item.type || 'Weekend bus';
+        item.title = this.props.item.from + " to " + this.props.item.to;
         item.info = this.props.item.seats + ' seats available';
         item.buttonTitle = 'Book now';
     }
 
     _onClick = () => {
         if (this.props.item.buttonTitle) {
-            this.props.navigation.navigate('ConfirmOrder', { ticket: this.props.item })
+            Alert.alert(
+                'Confirm order',
+                'Are you sure you want to book this bus?',
+                [
+                  {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                  {text: 'OK', onPress: () => this.props.navigation.navigate('ConfirmOrder', { ticket: this.props.item })},
+                ],
+                { cancelable: false }
+            );
         }
     }
 
