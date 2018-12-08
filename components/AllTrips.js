@@ -26,13 +26,13 @@ export default class AllTrips extends React.Component {
     }
 
     fetchItems = () => {
-        const { currentPage } = this.state;
-        const url = 'http://' + Constants.transportIp + '/get-buses?perPage=5&currentPage=' + currentPage;
+        const url = 'http://' + Constants.transportIp + '/get-buses';
         fetch(url)
             .then(async (res) => {
                 console.log(res);
                 const data = await res.json();
                 console.log(data);
+                data.buttonTitle = 'Kanishk';
                 this.setState({ data: data });
             })
             .catch(err => {
@@ -45,18 +45,6 @@ export default class AllTrips extends React.Component {
         this.fetchItems();
     }
 
-    _renderSectionHeader = ({ section }) => {
-        return (
-            <Header
-                backgroundColor={Constants.primaryColor}
-                placement='left'
-                leftComponent={null}
-                centerComponent={<Text>{section.title}</Text>}
-                rightComponent={null}
-            />
-        );
-    }
-
     componentDidMount() {
         this.props.navigation.setParams({ title: 'All trips' });
     }
@@ -66,7 +54,7 @@ export default class AllTrips extends React.Component {
         if (!data) {
             return (
                 <ImageBackground imageStyle={styles.image} style={styles.background} source={require('../assets/background.jpg')}>
-                    <ActivityIndicator color={Constants.primaryColor} />
+                    <ActivityIndicator color={Constants.primaryColor} style={{alignSelf: 'center'}} />
                 </ImageBackground>
             );
         }
@@ -79,10 +67,6 @@ export default class AllTrips extends React.Component {
                             data={data}
                             renderItem={({ item }) => <BusCard navigation={this.props.navigation} item={item} />}
                             keyExtractor={this._keyExtractor}
-                            onEndReached={this.fetchItems}
-                            onEndReachedThreshold={0.40}
-                            refreshing={false}
-                            onRefresh={this._onRefresh}
                         />
                     </View>
                 </ImageBackground>,
@@ -105,8 +89,10 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     background: {
+        flex: 1,
         height: DEVICE_HEIGHT,
         width: DEVICE_WIDTH,
+        alignItems: 'center',
     },
     image: {
         backgroundColor: 'rgba(0, 0, 0, 0.1)',
