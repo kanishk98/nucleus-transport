@@ -26,43 +26,13 @@ export default class AllTrips extends React.Component {
     }
 
     fetchItems = () => {
-        const { currentPage } = this.state;
-        const url = 'http://' + Constants.transportIp + '/get-orders?perPage=5&currentPage=' + currentPage;
+        const url = 'http://' + Constants.transportIp + '/get-orders';
         fetch(url)
             .then(async (res) => {
                 console.log(res);
                 const data = await res.json();
                 console.log(data);
-                let sections = [];
-                // index each section by data.date
-                let prevTitle = '';
-                let dataLength = data.length;
-                let title = data[0].date;
-                let counter = 0;
-                while (counter < dataLength) {
-                    if (counter != 0) {
-                        prevTitle = data[counter - 1].data;
-                    }
-                    if (title != prevTitle) {
-                        sections.push({
-                            data: [data[counter]],
-                            title: title,
-                        });
-                    } else {
-                        // old section, new bus
-                        let oldLast = sections[sections.length - 1];
-                        oldLast.data.push(data[counter]);
-                        console.log(oldLast);
-                        sections.splice(-1, 1, oldLast);
-                    }
-                    ++counter;
-                }
-                if (currentPage > 1 && !!this.state.sections) {
-                    // old sections are present
-                    let oldSections = this.state.sections;
-                    oldSections.push(sections);
-                    sections = oldSections;
-                }
+                data.buttonTitle = 'Kanishk';
                 this.setState({ data: data });
             })
             .catch(err => {
@@ -73,18 +43,6 @@ export default class AllTrips extends React.Component {
 
     _onRefresh = () => {
         this.fetchItems();
-    }
-
-    _renderSectionHeader = ({ section }) => {
-        return (
-            <Header
-                backgroundColor={Constants.primaryColor}
-                placement='left'
-                leftComponent={null}
-                centerComponent={<Text>{section.title}</Text>}
-                rightComponent={null}
-            />
-        );
     }
 
     componentDidMount() {
@@ -109,10 +67,6 @@ export default class AllTrips extends React.Component {
                             data={data}
                             renderItem={({ item }) => <OrderCard navigation={this.props.navigation} item={item} />}
                             keyExtractor={this._keyExtractor}
-                            onEndReached={this.fetchItems}
-                            onEndReachedThreshold={0.40}
-                            refreshing={false}
-                            onRefresh={this._onRefresh}
                         />
                     </View>
                 </ImageBackground>,
