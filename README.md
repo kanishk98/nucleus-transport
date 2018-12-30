@@ -1,2 +1,3 @@
-# Nucleus transport
-The transport section of Nucleus, a service-unifying app exclusively for college students.
+# transport
+
+An app for students' transport needs in SNU. 
